@@ -14,15 +14,25 @@
     - name: Install Docker
       command: apt install -y docker.io
       become: yes
+
     - name: Install Docker Compose
-      remote_user: ubuntu
+      become: yes
       get_url:
         url: https://github.com/docker/compose/releases/download/1.28.3/docker-compose-Linux-x86_64
         dest: /usr/local/bin/docker-compose
         mode: 'u+x,g+x'
+
+    - name: Add the user 'james' with a bash shell, appending the group 'admins' and 'developers' to the user's groups
+      become: yes
+      user:
+        name: homekit
+        groups: docker
+        append: yes
+
     - name: Copy docker-compose.yml file
       copy:
         src: docker-compose.yml
         dest: /home/homekit/docker-compose.yml
+
     - name: Start Services
       command: docker-compose up -d
