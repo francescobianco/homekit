@@ -1,0 +1,15 @@
+---
+
+- name: Homekit Playbook
+  hosts: homekit
+
+  vars_prompt:
+    - name: ansible_password
+      prompt: Homekit password?
+
+  tasks:
+    - name: Get config for VyOS devices
+      command: ls
+
+    - name: Display the config
+      command: ls
