@@ -7,9 +7,22 @@
     - name: ansible_password
       prompt: Homekit password?
 
-  tasks:
-    - name: Get config for VyOS devices
-      command: ls
+  vars:
+    - ansible_become_pass: "{{ ansible_password }}"
 
-    - name: Display the config
-      command: ls
+  tasks:
+    - name: Install Docker
+      command: apt install -y docker.io
+      become: yes
+    - name: Install Docker Compose
+      remote_user: ubuntu
+      get_url:
+        url: https://github.com/docker/compose/releases/download/1.28.3/docker-compose-Linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: 'u+x,g+x'
+    - name: Copy docker-compose.yml file
+      copy:
+        src: docker-compose.yml
+        dest: /home/homekit/docker-compose.yml
+    - name: Start Services
+      command: docker-compose up -d
